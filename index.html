@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Allreview – 글로벌 이미지 월드컵 & 노필터 리뷰 플랫폼. 실시간 트렌드 기반 16강 이미지 배틀!" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>Allreview 올리뷰 – 이미지 월드컵 & 팩트폭행 리뷰</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Google Analytics Placeholder -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script> -->
+
+  <!-- Google AdSense Placeholder -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script> -->
+</head>
+<body>
+
+  <!-- ========== LOADING / SPLASH ========== -->
+  <div id="splash-screen" class="screen active">
+    <div class="splash-content">
+      <div class="logo-glow">
+        <h1 class="logo">🔥 Allreview</h1>
+        <p class="tagline">이미지 월드컵 · 팩트폭행 리뷰</p>
+      </div>
+      <div class="loader">
+        <div class="loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ONBOARDING ========== -->
+  <div id="onboarding-screen" class="screen">
+    <div class="onboard-card glass-card">
+      <h2>🌍 국가를 선택하세요</h2>
+      <p class="hint">선택한 국가 기반으로 트렌드 월드컵이 진행됩니다</p>
+      <div class="country-select-wrapper">
+        <select id="country-select" class="select-input">
+          <option value="" disabled selected>국가 선택...</option>
+        </select>
+      </div>
+      <div class="nickname-wrapper">
+        <input type="text" id="nickname-input" class="text-input" placeholder="닉네임 입력 (익명)" maxlength="20" />
+      </div>
+      <button id="start-btn" class="btn-primary" disabled>
+        <span>🎮 게임 시작</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========== MAIN APP SHELL ========== -->
+  <div id="app-screen" class="screen">
+
+    <!-- Top Nav -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <span class="brand">🔥 Allreview</span>
+      </div>
+      <div class="top-bar-right">
+        <span id="user-badge" class="user-badge"></span>
+        <button id="nav-hall" class="icon-btn" title="명예의 전당">🏆</button>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="tab-worldcup">⚔️ 월드컵</button>
+      <button class="tab-btn" data-tab="tab-hall">🏆 명예의 전당</button>
+    </nav>
+
+    <!-- ===== TAB: WORLDCUP ===== -->
+    <section id="tab-worldcup" class="tab-panel active">
+
+      <!-- Keyword Selector -->
+      <div class="keyword-bar">
+        <div class="keyword-scroll" id="keyword-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Match Arena -->
+      <div id="arena" class="arena">
+        <div class="round-badge" id="round-badge">16강</div>
+
+        <div class="match-container">
+          <!-- Left Contender -->
+          <div class="contender" id="contender-left" data-side="left">
+            <div class="img-frame">
+              <img id="img-left" src="" alt="Contender A" />
+            </div>
+            <div class="contender-info">
+              <span class="flag" id="flag-left"></span>
+              <span class="uploader" id="name-left"></span>
+            </div>
+          </div>
+
+          <div class="vs-badge">
+            <span>VS</span>
+          </div>
+
+          <!-- Right Contender -->
+          <div class="contender" id="contender-right" data-side="right">
+            <div class="img-frame">
+              <img id="img-right" src="" alt="Contender B" />
+            </div>
+            <div class="contender-info">
+              <span class="flag" id="flag-right"></span>
+              <span class="uploader" id="name-right"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Match Progress -->
+        <div class="progress-bar-wrap">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <p class="progress-text" id="progress-text">1 / 8</p>
+      </div>
+
+      <!-- Upload CTA -->
+      <div class="upload-cta">
+        <button id="upload-btn" class="btn-fire">
+          🔥 내 이미지 참전하기
+        </button>
+        <input type="file" id="upload-input" accept="image/*" hidden />
+      </div>
+
+      <!-- No Keywords State -->
+      <div id="empty-state" class="empty-state hidden">
+        <p>😴 아직 이 국가의 트렌드가 수집되지 않았어요</p>
+        <p>잠시 후 다시 확인해주세요!</p>
+      </div>
+    </section>
+
+    <!-- ===== TAB: HALL OF FAME ===== -->
+    <section id="tab-hall" class="tab-panel">
+      <h2 class="section-title">🏆 명예의 전당</h2>
+      <div id="hall-list" class="hall-list">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ========== WINNER MODAL ========== -->
+  <div id="winner-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <div class="confetti-burst" id="confetti"></div>
+      <h2 class="winner-title">👑 우승!</h2>
+      <div class="winner-image-wrap">
+        <img id="winner-img" src="" alt="Winner" />
+        <div class="win-badge" id="win-badge"></div>
+      </div>
+      <p class="winner-uploader" id="winner-uploader"></p>
+
+      <!-- Review Section -->
+      <div class="review-section">
+        <h3>🌶️ 노필터 리뷰를 남겨주세요</h3>
+        <textarea id="review-input" class="review-textarea" placeholder="팩트폭행 한마디..." maxlength="200"></textarea>
+        <button id="submit-review-btn" class="btn-primary">리뷰 남기기</button>
+      </div>
+
+      <!-- Best Reviews -->
+      <div class="best-reviews" id="best-reviews">
+        <h3>🔥 베스트 노필터 리뷰</h3>
+        <div id="review-list" class="review-list">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <button id="close-modal-btn" class="btn-ghost">다음 월드컵 →</button>
+    </div>
+  </div>
+
+  <!-- ========== UPLOAD MODAL ========== -->
+  <div id="upload-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card upload-modal-inner">
+      <h2>🔥 내 이미지 참전</h2>
+      <p class="hint">업로드한 사진은 다른 유저의 월드컵에 바로 투입됩니다!</p>
+      <div class="upload-preview-wrap">
+        <img id="upload-preview" src="" alt="Preview" class="hidden" />
+        <label for="upload-input-modal" class="upload-dropzone" id="upload-dropzone">
+          <span>📷 이미지를 선택하세요</span>
+        </label>
+        <input type="file" id="upload-input-modal" accept="image/*" hidden />
+      </div>
+      <button id="confirm-upload-btn" class="btn-primary" disabled>업로드</button>
+      <button id="cancel-upload-btn" class="btn-ghost">취소</button>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="js/config.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/worldcup.js"></script>
+  <script type="module" src="js/review.js"></script>
+
+  <!-- Google Website Translator Placeholder -->
+  <!-- <div id="google_translate_element"></div>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'ko',
+        includedLanguages: 'en,ja,zh-CN,es,fr,de,pt,ar',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
+</body>
+</html>

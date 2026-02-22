@@ -1,0 +1,19 @@
+{
+    "name": "allreview",
+    "version": "1.0.0",
+    "description": "Allreview – Global Image Worldcup & No-Filter Review Platform",
+    "private": true,
+    "scripts": {
+        "dev": "npx serve . -p 3000",
+        "seed": "node scripts/auto_seed.js",
+        "seed:test": "node scripts/auto_seed.js --dry-run"
+    },
+    "dependencies": {
+        "@supabase/supabase-js": "^2.39.0",
+        "cheerio": "^1.0.0-rc.12",
+        "node-fetch": "^3.3.2"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    }
+}
