@@ -14,6 +14,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import * as cheerio from 'cheerio';
+import fetch from 'node-fetch';
 
 // ─── Configuration ────────────────────────────────────────────
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co';
@@ -37,7 +38,9 @@ const GEO_MAP = {
     TR: 'TR', TH: 'TH', VN: 'VN', PH: 'PH', NG: 'NG',
 };
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    global: { fetch: fetch }
+});
 
 // ─── Main Pipeline ────────────────────────────────────────────
 async function main() {
