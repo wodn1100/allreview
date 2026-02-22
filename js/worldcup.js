@@ -7,7 +7,7 @@ import { showWinnerModal } from './review.js';
 
 // ─── State ────────────────────────────────────────────────────
 let keywords = [];
-let activeKeyword = null;
+export let activeKeyword = null;
 let imagePool = [];
 let matchups = [];
 let currentMatch = 0;

@@ -255,7 +255,9 @@ function escapeHtml(text) {
 }
 
 function timeAgo(dateStr) {
+    if (!dateStr) return '방금 전';
     const diff = Date.now() - new Date(dateStr).getTime();
+    if (diff < 0) return '방금 전';
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return '방금 전';
     if (mins < 60) return `${mins}분 전`;
@@ -263,4 +265,118 @@ function timeAgo(dateStr) {
     if (hrs < 24) return `${hrs}시간 전`;
     const days = Math.floor(hrs / 24);
     return `${days}일 전`;
+}
+
+// ─── Keyword Board ────────────────────────────────────────────
+const boardKeywordName = document.getElementById('board-current-keyword');
+const boardInput = document.getElementById('board-input');
+const submitBoardBtn = document.getElementById('submit-board-btn');
+const boardList = document.getElementById('board-list');
+
+let activeBoardKeywordId = null;
+
+export async function loadKeywordBoard(keywordId, keywordName) {
+    activeBoardKeywordId = keywordId;
+    boardKeywordName.textContent = keywordName;
+    boardInput.value = '';
+
+    boardList.innerHTML = '<p style="color:var(--text-muted);text-align:center;">댓글 불러오는 중...</p>';
+
+    const { data, error } = await supabase
+        .from('keyword_reviews')
+        .select('*')
+        .eq('keyword_id', keywordId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+    if (error) {
+        boardList.innerHTML = '<p style="color:var(--text-muted);text-align:center;">토론방 로딩 실패</p>';
+        return;
+    }
+
+    renderBoardReviews(data || []);
+}
+
+function renderBoardReviews(reviews) {
+    boardList.innerHTML = '';
+
+    if (reviews.length === 0) {
+        boardList.innerHTML = '<p style="color:var(--text-muted);text-align:center;">가장 먼저 의견을 남겨보세요! 🚀</p>';
+        return;
+    }
+
+    reviews.forEach(rev => {
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        card.innerHTML = `
+            <p class="review-text">${escapeHtml(rev.content)}</p>
+            <p class="review-meta">익명 👻 · ${timeAgo(rev.created_at)}</p>
+            <div class="reaction-bar" style="margin-top: 0.5rem;">
+                <button class="reaction-btn board-spicy" data-type="spicy" data-id="${rev.id}">🌶️ ${rev.spicy_votes || 0}</button>
+                <button class="reaction-btn board-cider" data-type="cider" data-id="${rev.id}">🥤 ${rev.cider_votes || 0}</button>
+                <button class="reaction-btn board-angry" data-type="angry" data-id="${rev.id}">🤬 ${rev.angry_votes || 0}</button>
+            </div>
+        `;
+        boardList.appendChild(card);
+    });
+
+    boardList.querySelectorAll('.reaction-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleBoardReaction(btn));
+    });
+}
+
+submitBoardBtn.addEventListener('click', async () => {
+    if (!activeBoardKeywordId) {
+        showToast('먼저 토론할 트렌드를 선택해주세요.');
+        return;
+    }
+
+    const content = boardInput.value.trim();
+    if (!content) return;
+
+    submitBoardBtn.disabled = true;
+    submitBoardBtn.textContent = '등록 중...';
+
+    const { error } = await supabase
+        .from('keyword_reviews')
+        .insert({
+            keyword_id: activeBoardKeywordId,
+            content: content
+        });
+
+    if (error) {
+        showToast('댓글 등록 실패');
+    } else {
+        showToast('댓글이 등록되었습니다!');
+        loadKeywordBoard(activeBoardKeywordId, boardKeywordName.textContent);
+    }
+
+    submitBoardBtn.disabled = false;
+    submitBoardBtn.textContent = '댓글 등록';
+});
+
+async function handleBoardReaction(btn) {
+    const reviewId = btn.dataset.id;
+    const type = btn.dataset.type;
+    const colName = type + '_votes';
+
+    const key = `board_vote_${reviewId}_${type}`;
+    if (localStorage.getItem(key)) {
+        showToast('이미 투표했습니다!');
+        return;
+    }
+
+    const { data } = await supabase.from('keyword_reviews').select(colName).eq('id', reviewId).single();
+    if (!data) return;
+
+    const newCount = (data[colName] || 0) + 1;
+    const { error } = await supabase.from('keyword_reviews').update({ [colName]: newCount }).eq('id', reviewId);
+
+    if (!error) {
+        localStorage.setItem(key, '1');
+        const emoji = type === 'spicy' ? '🌶️' : type === 'cider' ? '🥤' : '🤬';
+        btn.textContent = `${emoji} ${newCount}`;
+        btn.style.transform = 'scale(1.2)';
+        setTimeout(() => btn.style.transform = '', 200);
+    }
 }

@@ -114,6 +114,20 @@ tabBtns.forEach(btn => {
         if (btn.dataset.tab === 'tab-hall') {
             loadHallOfFame();
         }
+
+        // Lazy-load keyword board
+        if (btn.dataset.tab === 'tab-board') {
+            import('./worldcup.js').then(module => {
+                const activeKw = module.activeKeyword;
+                import('./review.js').then(reviewModule => {
+                    if (activeKw) {
+                        reviewModule.loadKeywordBoard(activeKw.id, activeKw.keyword_name);
+                    } else {
+                        document.getElementById('board-list').innerHTML = '<p style="color:var(--text-muted);text-align:center;">토론할 키워드를 먼저 월드컵 탭에서 선택해주세요.</p>';
+                    }
+                });
+            });
+        }
     });
 });
 
