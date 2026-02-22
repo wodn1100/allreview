@@ -23,9 +23,11 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ./bot
         run: npm ci
 
       - name: Run auto-seed script
+        working-directory: ./bot
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
